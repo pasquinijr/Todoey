@@ -58,10 +58,10 @@
 			children = (
 				36DFFE6221319246006DEB55 /* AppDelegate.swift */,
 				36DFFE772131D6F1006DEB55 /* Controllers */,
-				36DFFE782131D716006DEB55 /* Views */,
-				36DFFE792131D721006DEB55 /* Supporting Files */,
-				36DFFE6E21319248006DEB55 /* Info.plist */,
 				36DFFE762131D6CE006DEB55 /* Data Model */,
+				36DFFE6E21319248006DEB55 /* Info.plist */,
+				36DFFE792131D721006DEB55 /* Supporting Files */,
+				36DFFE782131D716006DEB55 /* Views */,
 			);
 			path = Todoey;
 			sourceTree = "<group>";
