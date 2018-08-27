@@ -8,17 +8,19 @@
 
 import UIKit
 import RealmSwift
+import ChameleonFramework
 
-class CategoryViewController: UITableViewController {
+class CategoryViewController: SwipeTableViewController {
     
     let realm = try! Realm()
     var categoryItems: Results<Category>?
 
     override func viewDidLoad() {
         super.viewDidLoad()
+        tableView.separatorStyle = .none
         loadCategories()
     }
-    
+
     //MARK - TableView Datasource Methods
     
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
@@ -26,8 +28,13 @@ class CategoryViewController: UITableViewController {
     }
     
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(withIdentifier: "CategoryCell", for: indexPath)
-        cell.textLabel?.text = categoryItems?[indexPath.row].name ?? "No categories added yet"
+        let cell = super.tableView(tableView, cellForRowAt: indexPath)
+        if let category = categoryItems?[indexPath.row] {
+            cell.textLabel?.text = category.name
+            guard let categoryColor = UIColor(hexString: category.backgroundColor) else { fatalError() }
+            cell.backgroundColor = categoryColor
+            cell.textLabel?.textColor = ContrastColorOf(categoryColor, returnFlat: true)
+        }
         return cell
     }
     
@@ -53,6 +60,7 @@ class CategoryViewController: UITableViewController {
             if textField.text != "" {
                 let newCategory = Category()
                 newCategory.name = textField.text!
+                newCategory.backgroundColor = UIColor(randomFlatColorOf:.light).hexValue()
                 self.save(category: newCategory)
             }
         }
@@ -80,5 +88,18 @@ class CategoryViewController: UITableViewController {
     func loadCategories() {
         categoryItems = realm.objects(Category.self)
         tableView.reloadData()
+    }
+    
+    override func updateModel(at indexPath: IndexPath) {
+        super.updateModel(at: indexPath)
+        if let categoryForDeletion = self.categoryItems?[indexPath.row] {
+            do {
+                try self.realm.write {
+                    self.realm.delete(categoryForDeletion)
+                }
+            } catch {
+                print("Error deleting category, \(error)")
+            }
+        }
     }
 }
